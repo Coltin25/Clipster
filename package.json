@@ -1,0 +1,24 @@
+{
+  "name": "clipster",
+  "private": true,
+  "version": "0.1.0",
+  "main": "electron/dist/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:preload\" \"npm:dev:main\" \"npm:dev:electron\"",
+    "dev:renderer": "cd renderer && npm run dev",
+    "dev:preload": "esbuild electron/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=electron/dist/preload.cjs --watch",
+    "dev:main": "esbuild electron/main.ts --bundle --platform=node --format=cjs --external:electron --outfile=electron/dist/main.cjs --watch",
+    "dev:electron": "wait-on tcp:5173 file:electron/dist/main.cjs file:electron/dist/preload.cjs && electron .",
+    "build": "cd renderer && vite build && npm run build:preload && npm run build:main",
+    "build:preload": "esbuild electron/preload.ts --bundle --platform=node --format=cjs --outfile=electron/dist/preload.cjs",
+    "build:main": "esbuild electron/main.ts --bundle --platform=node --format=cjs --external:electron --outfile=electron/dist/main.cjs",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "concurrently": "^9.0.0",
+    "electron": "^31.3.0",
+    "esbuild": "^0.25.9",
+    "wait-on": "^7.2.0"
+  }
+}
